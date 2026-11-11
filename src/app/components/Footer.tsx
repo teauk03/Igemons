@@ -13,7 +13,7 @@ const NAV_ITEMS = [
   { label: "내정보", href: "/mypage", icon: User },
 ];
 
-export default function BottomNav() {
+export default function Footer() {
   const pathname = usePathname();
 
   return (

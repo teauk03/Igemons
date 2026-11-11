@@ -1,20 +1,11 @@
 import Link from "next/link";
-import { Search, Bell, ShoppingCart } from "lucide-react";
+import Header from "./components/Header";
+import Footer from "./components/Footer";
 
 export default function HomePage() {
   return (
     <div className="flex flex-col gap-5 p-4">
-      {/* 상단 헤더 */}
-      <header className="flex items-center justify-between py-2">
-        <Link href="/" className="text-xl font-bold tracking-tight text-emerald-600">
-          Igemons
-        </Link>
-        <div className="flex items-center gap-3 text-gray-700">
-          <Link href="/search"><Search size={22} className="cursor-pointer" /></Link>
-          <Link href="/notifications"><Bell size={22} className="cursor-pointer" /></Link>
-          <Link href="/cart"><ShoppingCart size={22} className="cursor-pointer" /></Link>
-        </div>
-      </header>
+      <Header />
 
       {/* 원클릭 서류 작성 CTA 카드 */}
       <section className="bg-emerald-100/70 border border-emerald-200 rounded-2xl p-5 flex flex-col justify-between h-36">
@@ -55,6 +46,8 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+
+      <Footer />
     </div>
   );
 }

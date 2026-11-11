@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import BottomNav from "./components/BottomNav";
+import Footer from "./components/Footer";
 
 export const metadata: Metadata = {
   title: "이게모노 (Igemons)",
@@ -21,7 +21,7 @@ export default function RootLayout({
             {children}
           </main>
           {/* 하단 고정 네비게이션 바 */}
-          <BottomNav />
+          <Footer />
         </div>
       </body>
     </html>
