@@ -1,0 +1,25 @@
+spring:
+  application:
+    name: igemons
+  datasource:
+    url: ${DATABASE_URL:jdbc:postgresql://localhost:5432/igemons}
+    username: ${DATABASE_USERNAME:igemons}
+    password: ${DATABASE_PASSWORD}
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: update
+server:
+  port: ${SERVER_PORT:8080}
+
+app:
+  cors:
+    allowed-origin: ${FRONTEND_URL:http://localhost:3000}
+
+kakao:
+  client-id: ${KAKAO_CLIENT_ID}
+  client-secret: ${KAKAO_CLIENT_SECRET:}
+
+jwt:
+  secret: ${JWT_SECRET}
+  expiration-ms: ${JWT_EXPIRATION_MS:604800000}
