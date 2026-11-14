@@ -1,6 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import {
   ShoppingBag,
   Bookmark,
@@ -45,6 +46,12 @@ export default function MyPage() {
           <LogIn size={16} />
           로그인하기
         </button>
+        <p className="text-xs text-gray-400">
+          계정이 없으신가요?{" "}
+          <Link href="/signup" className="text-emerald-600 font-medium">
+            회원가입
+          </Link>
+        </p>
       </div>
     );
   }

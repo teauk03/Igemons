@@ -1,6 +1,6 @@
 package com.igemons.adapter.in.web.auth;
 
-import com.igemons.application.auth.KakaoAuthService;
+import com.igemons.application.auth.LocalAuthService;
 import com.igemons.application.auth.UserRepository;
 import com.igemons.domain.users.User;
 import com.igemons.infrastructure.jwt.JwtService;
@@ -13,20 +13,34 @@ import org.springframework.web.server.ResponseStatusException;
 @RequestMapping("/api/auth")
 public class AuthController {
 
-    private final KakaoAuthService kakaoAuthService;
+    private final LocalAuthService localAuthService;
     private final UserRepository userRepository;
     private final JwtService jwtService;
 
-    public AuthController(KakaoAuthService kakaoAuthService, UserRepository userRepository, JwtService jwtService) {
-        this.kakaoAuthService = kakaoAuthService;
+    public AuthController(LocalAuthService localAuthService, UserRepository userRepository, JwtService jwtService) {
+        this.localAuthService = localAuthService;
         this.userRepository = userRepository;
         this.jwtService = jwtService;
     }
 
-    @PostMapping("/kakao")
-    public ResponseEntity<AuthResponse> kakaoLogin(@RequestBody KakaoLoginRequest request) {
-        AuthResponse response = kakaoAuthService.loginWithKakao(request.code(), request.redirectUri());
-        return ResponseEntity.ok(response);
+    @PostMapping("/register")
+    public ResponseEntity<AuthResponse> register(@RequestBody RegisterRequest request) {
+        try {
+            AuthResponse response = localAuthService.register(request.email(), request.nickname(), request.password());
+            return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        } catch (IllegalArgumentException e) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, e.getMessage());
+        }
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<AuthResponse> login(@RequestBody LoginRequest request) {
+        try {
+            AuthResponse response = localAuthService.login(request.email(), request.password());
+            return ResponseEntity.ok(response);
+        } catch (IllegalArgumentException e) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, e.getMessage());
+        }
     }
 
     @GetMapping("/me")

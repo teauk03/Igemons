@@ -17,14 +17,17 @@ public class UserPersistenceAdapter implements UserRepository {
 
     @Override
     public Optional<User> findByProviderId(String providerId) {
-        return repository.findByProviderId(providerId)
-            .map(UserJpaEntity::toDomain);
+        return repository.findByProviderId(providerId).map(UserJpaEntity::toDomain);
+    }
+
+    @Override
+    public Optional<User> findByEmail(String email) {
+        return repository.findByEmail(email).map(UserJpaEntity::toDomain);
     }
 
     @Override
     public Optional<User> findById(Long id) {
-        return repository.findById(id)
-            .map(UserJpaEntity::toDomain);
+        return repository.findById(id).map(UserJpaEntity::toDomain);
     }
 
     @Override

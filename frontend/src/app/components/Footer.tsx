@@ -13,7 +13,7 @@ const NAV_ITEMS = [
   { label: "내정보", href: "/mypage", icon: User },
 ];
 
-const HIDDEN_PATHS = ["/login", "/auth/callback"];
+const HIDDEN_PATHS = ["/login", "/signup", "/auth/callback"];
 
 export default function Footer() {
   const pathname = usePathname();

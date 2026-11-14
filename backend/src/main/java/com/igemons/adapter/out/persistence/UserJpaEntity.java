@@ -16,10 +16,10 @@ public class UserJpaEntity {
     @Column(nullable = false, length = 20)
     private AuthProvider provider;
 
-    @Column(name = "provider_id", nullable = false, length = 64, unique = true)
+    @Column(name = "provider_id", nullable = false, length = 255, unique = true)
     private String providerId;
 
-    @Column(length = 255)
+    @Column(nullable = false, length = 255)
     private String email;
 
     @Column(nullable = false, length = 50)
@@ -27,6 +27,9 @@ public class UserJpaEntity {
 
     @Column(name = "profile_image_url", length = 500)
     private String profileImageUrl;
+
+    @Column(name = "password_hash", length = 72)
+    private String passwordHash;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
@@ -52,6 +55,7 @@ public class UserJpaEntity {
         entity.email = user.getEmail();
         entity.nickname = user.getNickname();
         entity.profileImageUrl = user.getProfileImageUrl();
+        entity.passwordHash = user.getPasswordHash();
         entity.role = user.getRole();
         entity.status = user.getStatus();
         entity.lastLoginAt = user.getLastLoginAt();
@@ -62,7 +66,7 @@ public class UserJpaEntity {
     public User toDomain() {
         return User.restore(
             UserId.of(id), provider, providerId, email, nickname,
-            profileImageUrl, role, status, lastLoginAt, createdAt
+            profileImageUrl, passwordHash, role, status, lastLoginAt, createdAt
         );
     }
 

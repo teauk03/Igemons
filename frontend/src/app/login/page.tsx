@@ -1,24 +1,35 @@
 "use client";
 
+import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import Image from "next/image";
+import { useAuth } from "../context/AuthContext";
 
 export default function LoginPage() {
   const router = useRouter();
+  const { login } = useAuth();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const handleKakaoLogin = () => {
-    const clientId = process.env.NEXT_PUBLIC_KAKAO_CLIENT_ID;
-    const redirectUri = process.env.NEXT_PUBLIC_KAKAO_REDIRECT_URI;
-    window.location.href =
-      `https://kauth.kakao.com/oauth/authorize` +
-      `?client_id=${clientId}` +
-      `&redirect_uri=${encodeURIComponent(redirectUri!)}` +
-      `&response_type=code`;
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError("");
+    setLoading(true);
+    try {
+      await login(email, password);
+      router.replace("/mypage");
+    } catch {
+      setError("이메일 또는 비밀번호가 올바르지 않습니다.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <div className="flex flex-col min-h-screen p-6">
-      {/* 뒤로가기 */}
       <button
         onClick={() => router.back()}
         className="self-start text-xs text-gray-400 hover:text-gray-600 mb-8"
@@ -26,8 +37,7 @@ export default function LoginPage() {
         ← 뒤로
       </button>
 
-      {/* 로고 */}
-      <div className="flex flex-col items-center gap-2 mb-14">
+      <div className="flex flex-col items-center gap-2 mb-10">
         <Image
           src="/igemono_log.jpeg"
           alt="Igemons 로고"
@@ -38,37 +48,52 @@ export default function LoginPage() {
         <p className="text-xs text-gray-400">특수동물을 위한 All-In-One 플랫폼</p>
       </div>
 
-      <div className="flex flex-col items-center gap-5">
-        <div className="text-center">
-          <h2 className="text-base font-bold text-gray-800">로그인</h2>
-          <p className="text-xs text-gray-400 mt-2 leading-relaxed">
-            카카오 계정으로 간편하게 시작하세요.
-          </p>
+      <form onSubmit={handleSubmit} className="flex flex-col gap-4 max-w-sm mx-auto w-full">
+        <h2 className="text-base font-bold text-gray-800 text-center mb-2">로그인</h2>
+
+        {error && (
+          <p className="text-xs text-red-500 text-center">{error}</p>
+        )}
+
+        <div className="flex flex-col gap-1">
+          <label className="text-xs text-gray-500">이메일</label>
+          <input
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+            placeholder="example@email.com"
+            className="border border-gray-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-green-400"
+          />
         </div>
 
-        {/* 카카오 로그인 버튼 */}
+        <div className="flex flex-col gap-1">
+          <label className="text-xs text-gray-500">비밀번호</label>
+          <input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+            placeholder="비밀번호"
+            className="border border-gray-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-green-400"
+          />
+        </div>
+
         <button
-          onClick={handleKakaoLogin}
-          className="w-full flex items-center justify-center gap-3 py-3.5 rounded-xl bg-[#FEE500] text-[#191919] text-sm font-semibold hover:bg-[#f0d900] transition-colors"
+          type="submit"
+          disabled={loading}
+          className="mt-2 py-3.5 rounded-xl bg-green-500 text-white text-sm font-semibold hover:bg-green-600 transition-colors disabled:opacity-60"
         >
-          {/* 카카오 로고 */}
-          <svg
-            width="20"
-            height="20"
-            viewBox="0 0 20 20"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              fillRule="evenodd"
-              clipRule="evenodd"
-              d="M10 1.667C5.398 1.667 1.667 4.558 1.667 8.125c0 2.27 1.407 4.267 3.541 5.44l-.899 3.343c-.08.296.254.531.511.355l3.892-2.59A9.6 9.6 0 0010 14.583c4.602 0 8.333-2.891 8.333-6.458S14.602 1.667 10 1.667z"
-              fill="#191919"
-            />
-          </svg>
-          카카오로 계속하기
+          {loading ? "로그인 중..." : "로그인"}
         </button>
-      </div>
+
+        <p className="text-xs text-center text-gray-400 mt-2">
+          계정이 없으신가요?{" "}
+          <Link href="/signup" className="text-green-500 font-medium">
+            회원가입
+          </Link>
+        </p>
+      </form>
     </div>
   );
 }
