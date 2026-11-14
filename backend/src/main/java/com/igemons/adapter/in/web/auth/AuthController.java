@@ -19,14 +19,11 @@ public class AuthController {
     private final UserRepository userRepository;
     private final JwtService jwtService;
 
+    /** 중복 가입(DuplicateUserException)은 GlobalExceptionHandler에서 409로 응답 */
     @PostMapping("/register")
     public ResponseEntity<AuthResponse> register(@RequestBody RegisterRequest request) {
-        try {
-            AuthResponse response = localAuthService.register(request.email(), request.nickname(), request.password());
-            return ResponseEntity.status(HttpStatus.CREATED).body(response);
-        } catch (IllegalArgumentException e) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, e.getMessage());
-        }
+        AuthResponse response = localAuthService.register(request.email(), request.nickname(), request.password());
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     @PostMapping("/login")

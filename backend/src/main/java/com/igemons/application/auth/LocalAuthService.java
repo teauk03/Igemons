@@ -21,7 +21,7 @@ public class LocalAuthService {
     @Transactional
     public AuthResponse register(String email, String nickname, String rawPassword) {
         userRepository.findByEmail(email).ifPresent(u -> {
-            throw new IllegalArgumentException("이미 사용 중인 이메일입니다.");
+            throw new DuplicateUserException();
         });
 
         String hash = passwordEncoder.encode(rawPassword);

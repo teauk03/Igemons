@@ -1,6 +1,7 @@
 package com.igemons.adapter.in.web.common;
 
 import com.igemons.application.NotFoundException;
+import com.igemons.application.auth.DuplicateUserException;
 import com.igemons.domain.DomainException;
 import com.igemons.domain.pets.PetAccessDeniedException;
 import org.springframework.http.HttpStatus;
@@ -26,6 +27,11 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(DomainException.class)
     public ResponseEntity<ErrorResponse> handleDomain(DomainException e) {
         return error(HttpStatus.BAD_REQUEST, e.getMessage());
+    }
+
+    @ExceptionHandler(DuplicateUserException.class)
+    public ResponseEntity<ErrorResponse> handleDuplicateUser(DuplicateUserException e) {
+        return error(HttpStatus.CONFLICT, e.getMessage());
     }
 
     @ExceptionHandler(NotFoundException.class)
