@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import Footer from "./components/Footer";
+import { AuthProvider } from "./context/AuthContext";
 
 export const metadata: Metadata = {
   title: "이게모노 (Igemons)",
@@ -15,14 +16,14 @@ export default function RootLayout({
   return (
     <html lang="ko">
       <body className="flex justify-center min-h-screen bg-gray-200">
-        {/* 모바일 화면비 고정 컨테이너 */}
-        <div className="w-full max-w-[430px] min-h-screen bg-white flex flex-col shadow-2xl relative">
-          <main className="flex-1 pb-20 overflow-y-auto">
-            {children}
-          </main>
-          {/* 하단 고정 네비게이션 바 */}
-          <Footer />
-        </div>
+        <AuthProvider>
+          <div className="w-full max-w-[430px] min-h-screen bg-white flex flex-col shadow-2xl relative">
+            <main className="flex-1 pb-20 overflow-y-auto">
+              {children}
+            </main>
+            <Footer />
+          </div>
+        </AuthProvider>
       </body>
     </html>
   );

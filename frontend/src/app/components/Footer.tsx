@@ -13,8 +13,12 @@ const NAV_ITEMS = [
   { label: "내정보", href: "/mypage", icon: User },
 ];
 
+const HIDDEN_PATHS = ["/login", "/auth/callback"];
+
 export default function Footer() {
   const pathname = usePathname();
+
+  if (HIDDEN_PATHS.includes(pathname)) return null;
 
   return (
     <nav className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[430px] bg-white border-t border-gray-100 flex justify-around py-2.5 z-50">

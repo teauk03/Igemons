@@ -1,8 +1,35 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import Header from "./components/Header";
-import Footer from "./components/Footer";
+import { api } from "./lib/api";
+
+interface PopularAnimal {
+  id: number;
+  name: string;
+}
+
+interface CommunityPreview {
+  popularPost: { id: number; title: string };
+  latestPost: { id: number; title: string };
+}
 
 export default function HomePage() {
+  const [popularAnimals, setPopularAnimals] = useState<PopularAnimal[]>([]);
+  const [communityPreview, setCommunityPreview] = useState<CommunityPreview | null>(null);
+
+  useEffect(() => {
+    api
+      .get<PopularAnimal[]>("/api/home/popular-animals")
+      .then(setPopularAnimals)
+      .catch(() => {});
+    api
+      .get<CommunityPreview>("/api/home/community-preview")
+      .then(setCommunityPreview)
+      .catch(() => {});
+  }, []);
+
   return (
     <div className="flex flex-col gap-5 p-4">
       <Header />
@@ -22,32 +49,37 @@ export default function HomePage() {
       </section>
 
       {/* 인기 생물 그리드 */}
-      <section>
-        <h3 className="text-sm font-semibold text-gray-800 mb-3">요즘 인기 많은 생물</h3>
-        <div className="grid grid-cols-4 gap-2 text-center text-xs text-gray-600">
-          {["크레", "개구리", "카멜레온", "거북이", "사마귀", "타란튤라", "고슴도치", "베타"].map((pet) => (
-            <div key={pet} className="flex flex-col items-center justify-center p-2.5 bg-gray-50 rounded-xl hover:bg-gray-100">
-              <span className="w-8 h-8 rounded-full bg-emerald-50 flex items-center justify-center text-sm mb-1">🦎</span>
-              <span>{pet}</span>
-            </div>
-          ))}
-        </div>
-      </section>
+      {popularAnimals.length > 0 && (
+        <section>
+          <h3 className="text-sm font-semibold text-gray-800 mb-3">요즘 인기 많은 생물</h3>
+          <div className="grid grid-cols-4 gap-2 text-center text-xs text-gray-600">
+            {popularAnimals.map((animal) => (
+              <div
+                key={animal.id}
+                className="flex flex-col items-center justify-center p-2.5 bg-gray-50 rounded-xl hover:bg-gray-100"
+              >
+                <span className="w-8 h-8 rounded-full bg-emerald-50 flex items-center justify-center text-sm mb-1">
+                  🦎
+                </span>
+                <span>{animal.name}</span>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
 
       {/* 최신/인기 게시물 미리보기 */}
       <section className="flex flex-col gap-2">
         <h3 className="text-sm font-semibold text-gray-800">커뮤니티 소식</h3>
         <div className="grid grid-cols-2 gap-3">
           <div className="h-28 bg-emerald-50/50 border border-emerald-100 rounded-xl p-3 flex flex-col justify-end text-xs text-gray-600">
-            인기 게시물
+            {communityPreview?.popularPost?.title ?? ""}
           </div>
           <div className="h-28 bg-emerald-50/50 border border-emerald-100 rounded-xl p-3 flex flex-col justify-end text-xs text-gray-600">
-            새 게시물
+            {communityPreview?.latestPost?.title ?? ""}
           </div>
         </div>
       </section>
-
-      <Footer />
     </div>
   );
 }

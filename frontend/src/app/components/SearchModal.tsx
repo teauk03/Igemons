@@ -3,63 +3,60 @@
 import { useEffect, useRef, useState } from "react";
 import { Search, X, ChevronRight } from "lucide-react";
 import Link from "next/link";
+import { api } from "../lib/api";
 
 interface SearchModalProps {
   isOpen: boolean;
   onClose: () => void;
 }
 
-// 분양 중인 동물 이름 목록 (추후 백엔드 API에서 이름 데이터만 받아오도록 교체)
-const ADOPTION_ANIMALS = [
-  { id: 1, name: "크레스티드 게코" },
-  { id: 2, name: "크레스티드 게코 카푸치노" },
-  { id: 3, name: "크레스티드 게코 릴리 화이트" },
-  { id: 4, name: "레오파드 게코" },
-  { id: 5, name: "레오파드 게코 블러드 텐저린" },
-  { id: 6, name: "가고일 게코" },
-  { id: 7, name: "차화 게코" },
-  { id: 8, name: "헤르만 육지거북" },
-  { id: 9, name: "호스필드 육지거북" },
-  { id: 10, name: "화이트트리프록" },
-  { id: 11, name: "다트프록" },
-  { id: 12, name: "볼파이톤" },
-  { id: 13, name: "콘스네이크" },
-  { id: 14, name: "비어디드래곤" },
-];
+interface AnimalSuggestion {
+  id: number;
+  name: string;
+}
 
 export default function SearchModal({ isOpen, onClose }: SearchModalProps) {
   if (!isOpen) return null;
-
   return <SearchModalContent onClose={onClose} />;
 }
 
 function SearchModalContent({ onClose }: Pick<SearchModalProps, "onClose">) {
   const [searchTerm, setSearchTerm] = useState("");
+  const [suggestions, setSuggestions] = useState<AnimalSuggestion[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  // 모달 마운트 시 인풋 포커스 및 배경 스크롤 방지
   useEffect(() => {
     inputRef.current?.focus();
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
-
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") onClose();
     };
     document.addEventListener("keydown", handleKeyDown);
-
     return () => {
       document.body.style.overflow = previousOverflow;
       document.removeEventListener("keydown", handleKeyDown);
     };
   }, [onClose]);
 
-  // 입력된 텍스트가 포함된 동물 이름 필터링 (대소문자/공백 무시)
-  const filteredAnimals = searchTerm.trim() === ""
-    ? []
-    : ADOPTION_ANIMALS.filter((animal) =>
-        animal.name.replace(/\s+/g, "").toLowerCase().includes(searchTerm.replace(/\s+/g, "").toLowerCase())
-      );
+  /* 300ms 디바운스로 API 검색 */
+  useEffect(() => {
+    const trimmed = searchTerm.trim();
+    if (!trimmed) {
+      setSuggestions([]);
+      return;
+    }
+    setIsLoading(true);
+    const timer = setTimeout(() => {
+      api
+        .get<AnimalSuggestion[]>(`/api/market/search?q=${encodeURIComponent(trimmed)}`)
+        .then(setSuggestions)
+        .catch(() => setSuggestions([]))
+        .finally(() => setIsLoading(false));
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [searchTerm]);
 
   return (
     <div
@@ -73,7 +70,7 @@ function SearchModalContent({ onClose }: Pick<SearchModalProps, "onClose">) {
         onClick={(event) => event.stopPropagation()}
         className="w-full max-w-[430px] max-h-[min(70vh,600px)] rounded-2xl bg-white flex flex-col p-4 shadow-xl"
       >
-        {/* 상단 텍스트 검색 입력창 */}
+        {/* 검색 입력창 */}
         <div className="flex items-center gap-2">
           <div className="flex-1 flex items-center gap-2 bg-gray-100 rounded-xl px-3 py-2.5">
             <Search size={18} className="text-gray-400 shrink-0" />
@@ -96,31 +93,35 @@ function SearchModalContent({ onClose }: Pick<SearchModalProps, "onClose">) {
           </button>
         </div>
 
-        {/* 텍스트 매칭 동물 이름 목록 */}
+        {/* 검색 결과 */}
         {searchTerm.trim() !== "" && (
           <div className="max-h-[min(50vh,420px)] overflow-y-auto pt-2">
-            {filteredAnimals.length > 0 ? (
-            <ul className="divide-y divide-gray-100">
-              {filteredAnimals.map((animal) => (
-                <li key={animal.id}>
-                  <Link
-                    href={`/market?query=${encodeURIComponent(animal.name)}`}
-                    onClick={onClose}
-                    className="flex items-center justify-between py-3.5 px-2 hover:bg-emerald-50/50 rounded-xl transition-colors group"
-                  >
-                    <span className="text-sm font-medium text-gray-800 group-hover:text-emerald-700">
-                      {animal.name}
-                    </span>
-                    <ChevronRight size={16} className="text-gray-300 group-hover:text-emerald-600" />
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <div className="py-20 text-center text-xs text-gray-400">
-              <p className="font-semibold text-gray-600 text-sm mb-1">&lsquo;{searchTerm}&rsquo;</p>
-              해당하는 동물 이름이 없습니다.
-            </div>
+            {isLoading ? (
+              <div className="py-10 text-center text-xs text-gray-400">검색 중...</div>
+            ) : suggestions.length > 0 ? (
+              <ul className="divide-y divide-gray-100">
+                {suggestions.map((animal) => (
+                  <li key={animal.id}>
+                    <Link
+                      href={`/market?query=${encodeURIComponent(animal.name)}`}
+                      onClick={onClose}
+                      className="flex items-center justify-between py-3.5 px-2 hover:bg-emerald-50/50 rounded-xl transition-colors group"
+                    >
+                      <span className="text-sm font-medium text-gray-800 group-hover:text-emerald-700">
+                        {animal.name}
+                      </span>
+                      <ChevronRight size={16} className="text-gray-300 group-hover:text-emerald-600" />
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <div className="py-20 text-center text-xs text-gray-400">
+                <p className="font-semibold text-gray-600 text-sm mb-1">
+                  &lsquo;{searchTerm}&rsquo;
+                </p>
+                해당하는 동물 이름이 없습니다.
+              </div>
             )}
           </div>
         )}
