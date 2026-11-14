@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { useAuth } from "../context/AuthContext";
+import { ApiError } from "../lib/api";
 
 export default function SignupPage() {
   const router = useRouter();
@@ -28,9 +29,8 @@ export default function SignupPage() {
       await register(email, nickname, password);
       router.replace("/mypage");
     } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : "";
-      if (msg.includes("409") || msg.includes("CONFLICT")) {
-        setError("이미 사용 중인 이메일입니다.");
+      if (err instanceof ApiError && err.status === 409) {
+        setError("이미 가입된 회원 정보가 있습니다.");
       } else {
         setError("회원가입에 실패했습니다. 다시 시도해주세요.");
       }

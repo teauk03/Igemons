@@ -1,6 +1,17 @@
 // 비어 있는 값("")도 기본값으로 대체되도록 || 사용
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8080";
 
+/** API 오류: 화면에서 상태 코드로 분기할 수 있도록 status를 함께 전달 */
+export class ApiError extends Error {
+  constructor(
+    public readonly status: number,
+    message: string,
+  ) {
+    super(message);
+    this.name = "ApiError";
+  }
+}
+
 async function request<T>(path: string, options?: RequestInit): Promise<T> {
   const token =
     typeof window !== "undefined" ? localStorage.getItem("token") : null;
@@ -17,7 +28,7 @@ async function request<T>(path: string, options?: RequestInit): Promise<T> {
   if (!res.ok) {
     // 백엔드 오류 응답 형식: { status, message }
     const body = await res.json().catch(() => null);
-    throw new Error(body?.message ?? `HTTP ${res.status}`);
+    throw new ApiError(res.status, body?.message ?? `HTTP ${res.status}`);
   }
   if (res.status === 204) return undefined as T;
   return res.json() as Promise<T>;
