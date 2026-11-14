@@ -138,7 +138,9 @@ export default function HandbookPage() {
   // 등록 창 (누른 + 버튼 근처에 표시)
   const [openForm, setOpenForm] = useState<{ kind: FormKind; anchor: Anchor } | null>(null);
   const [feedForm, setFeedForm] = useState({ item: "", quantity: "1" });
-  const [shedDate, setShedDate] = useState(todayInput);
+  // 렌더링 중 new Date()는 prerender 오류(blocking route)가 나므로 빈 값으로 시작하고,
+  // 오늘 날짜는 등록 창을 열 때(toggleForm 이벤트 핸들러) 채운다
+  const [shedDate, setShedDate] = useState("");
   const [weightInput, setWeightInput] = useState("");
   const [envForm, setEnvForm] = useState({ temp: "", humidity: "" });
   const [noteInput, setNoteInput] = useState("");
