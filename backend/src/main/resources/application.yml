@@ -5,12 +5,16 @@ spring:
     url: ${DATABASE_URL:jdbc:postgresql://localhost:5432/igemons}
     username: ${DATABASE_USERNAME:igemons}
     password: ${DATABASE_PASSWORD}
+    hikari:
+      # Supabase 무료 플랜은 동시 연결 수가 적어 기본값(10)보다 작게 유지
+      maximum-pool-size: ${DB_POOL_SIZE:5}
   jpa:
     open-in-view: false
     hibernate:
       ddl-auto: update
 server:
-  port: ${SERVER_PORT:8080}
+  # SERVER_PORT(로컬) > PORT(Render 등 배포 플랫폼이 주입) > 8080
+  port: ${SERVER_PORT:${PORT:8080}}
 
 app:
   cors:

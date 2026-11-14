@@ -1,0 +1,15 @@
+# 빌드 산출물 (이미지 안에서 새로 빌드)
+target/
+
+# 비밀값이 담긴 환경변수 파일은 절대 이미지에 포함하지 않음
+.env
+.env.*
+!.env.example
+
+# 로컬 개발 전용
+docker-compose.yml
+.github/
+.idea/
+.vscode/
+*.iml
+.DS_Store
