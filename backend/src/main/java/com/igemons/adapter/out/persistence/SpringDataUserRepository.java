@@ -6,14 +6,6 @@ import java.util.Optional;
 
 interface SpringDataUserRepository extends JpaRepository<UserJpaEntity, Long> {
     /**
-     * 소셜 로그인 제공자 ID로 사용자 조회
-     *
-     * @param providerId 소셜 로그인 제공자 ID
-     * @return 조회된 {@link UserJpaEntity} 엔티티 (없으면 {@code Optional.empty()})
-     */
-    Optional<UserJpaEntity> findByProviderId(String providerId);
-    
-    /**
      * 이메일로 사용자 조회
      *
      * @param email 이메일 주소

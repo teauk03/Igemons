@@ -12,14 +12,7 @@ public class UserJpaEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false, length = 20)
-    private AuthProvider provider;
-
-    @Column(name = "provider_id", nullable = false, length = 255, unique = true)
-    private String providerId;
-
-    @Column(nullable = false, length = 255)
+    @Column(nullable = false, length = 255, unique = true)
     private String email;
 
     @Column(nullable = false, length = 50)
@@ -28,7 +21,7 @@ public class UserJpaEntity {
     @Column(name = "profile_image_url", length = 500)
     private String profileImageUrl;
 
-    @Column(name = "password_hash", length = 72)
+    @Column(name = "password_hash", nullable = false, length = 72)
     private String passwordHash;
 
     @Enumerated(EnumType.STRING)
@@ -50,8 +43,6 @@ public class UserJpaEntity {
     public static UserJpaEntity from(User user) {
         UserJpaEntity entity = new UserJpaEntity();
         if (user.getId() != null) entity.id = user.getId().value();
-        entity.provider = user.getProvider();
-        entity.providerId = user.getProviderId();
         entity.email = user.getEmail();
         entity.nickname = user.getNickname();
         entity.profileImageUrl = user.getProfileImageUrl();
@@ -65,7 +56,7 @@ public class UserJpaEntity {
 
     public User toDomain() {
         return User.restore(
-            UserId.of(id), provider, providerId, email, nickname,
+            UserId.of(id), email, nickname,
             profileImageUrl, passwordHash, role, status, lastLoginAt, createdAt
         );
     }

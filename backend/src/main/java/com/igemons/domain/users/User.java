@@ -9,28 +9,23 @@ import com.igemons.domain.Guard;
 public class User {
 
     private final UserId id;
-    private final AuthProvider provider;
-    private final String providerId;
-    private String email;
+    private String email;                 // 로그인 ID (고유)
     private String nickname;
     private String profileImageUrl;
-    private String passwordHash;          // LOCAL 인증만 사용, OAuth는 null
+    private String passwordHash;          // BCrypt 해시
     private final UserRole role;
     private UserStatus status;
     private LocalDateTime lastLoginAt;
     private final LocalDateTime createdAt;
 
-    private User(UserId id, AuthProvider provider, String providerId, String email,
-                 String nickname, String profileImageUrl, String passwordHash,
-                 UserRole role, UserStatus status,
+    private User(UserId id, String email, String nickname, String profileImageUrl,
+                 String passwordHash, UserRole role, UserStatus status,
                  LocalDateTime lastLoginAt, LocalDateTime createdAt) {
         this.id = id;
-        this.provider = Objects.requireNonNull(provider);
-        this.providerId = Guard.requireText(providerId, "providerId", 255);
         this.email = Guard.requireText(email, "email", 255);
         this.nickname = Guard.requireText(nickname, "nickname", 50);
         this.profileImageUrl = Guard.optionalText(profileImageUrl, "profileImageUrl", 500);
-        this.passwordHash = passwordHash;
+        this.passwordHash = Objects.requireNonNull(passwordHash, "passwordHash");
         this.role = Objects.requireNonNull(role);
         this.status = Objects.requireNonNull(status);
         this.lastLoginAt = lastLoginAt;
@@ -41,17 +36,16 @@ public class User {
 
     // 로컬 회원가입
     public static User registerLocal(String email, String nickname, String passwordHash, LocalDateTime now) {
-        return new User(null, AuthProvider.LOCAL, email, email, nickname, null, passwordHash,
+        return new User(null, email, nickname, null, passwordHash,
                 UserRole.USER, UserStatus.ACTIVE, now, now);
     }
 
     // adapter에서 DB 값을 도메인으로 복원할 때만 사용
-    public static User restore(UserId id, AuthProvider provider, String providerId, String email,
-                               String nickname, String profileImageUrl, String passwordHash,
-                               UserRole role, UserStatus status,
+    public static User restore(UserId id, String email, String nickname, String profileImageUrl,
+                               String passwordHash, UserRole role, UserStatus status,
                                LocalDateTime lastLoginAt, LocalDateTime createdAt) {
         Objects.requireNonNull(id, "restore requires id");
-        return new User(id, provider, providerId, email, nickname, profileImageUrl, passwordHash,
+        return new User(id, email, nickname, profileImageUrl, passwordHash,
                 role, status, lastLoginAt, createdAt);
     }
 
@@ -83,8 +77,6 @@ public class User {
 
     // getter
     public UserId getId() { return id; }
-    public AuthProvider getProvider() { return provider; }
-    public String getProviderId() { return providerId; }
     public String getEmail() { return email; }
     public String getNickname() { return nickname; }
     public String getProfileImageUrl() { return profileImageUrl; }

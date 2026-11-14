@@ -15,11 +15,6 @@ public class UserPersistenceAdapter implements UserRepository {
     private final SpringDataUserRepository repository;
 
     @Override
-    public Optional<User> findByProviderId(String providerId) {
-        return repository.findByProviderId(providerId).map(UserJpaEntity::toDomain);
-    }
-
-    @Override
     public Optional<User> findByEmail(String email) {
         return repository.findByEmail(email).map(UserJpaEntity::toDomain);
     }
