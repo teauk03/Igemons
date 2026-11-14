@@ -1,5 +1,6 @@
 package com.igemons.adapter.in.web.auth;
 
+import lombok.RequiredArgsConstructor;
 import com.igemons.application.auth.LocalAuthService;
 import com.igemons.application.auth.UserRepository;
 import com.igemons.domain.users.User;
@@ -11,17 +12,12 @@ import org.springframework.web.server.ResponseStatusException;
 
 @RestController
 @RequestMapping("/api/auth")
+@RequiredArgsConstructor
 public class AuthController {
 
     private final LocalAuthService localAuthService;
     private final UserRepository userRepository;
     private final JwtService jwtService;
-
-    public AuthController(LocalAuthService localAuthService, UserRepository userRepository, JwtService jwtService) {
-        this.localAuthService = localAuthService;
-        this.userRepository = userRepository;
-        this.jwtService = jwtService;
-    }
 
     @PostMapping("/register")
     public ResponseEntity<AuthResponse> register(@RequestBody RegisterRequest request) {

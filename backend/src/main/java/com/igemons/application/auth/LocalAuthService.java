@@ -1,5 +1,6 @@
 package com.igemons.application.auth;
 
+import lombok.RequiredArgsConstructor;
 import com.igemons.adapter.in.web.auth.AuthResponse;
 import com.igemons.domain.users.User;
 import com.igemons.infrastructure.jwt.JwtService;
@@ -10,17 +11,12 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 
 @Service
+@RequiredArgsConstructor
 public class LocalAuthService {
 
     private final UserRepository userRepository;
     private final JwtService jwtService;
     private final BCryptPasswordEncoder passwordEncoder;
-
-    public LocalAuthService(UserRepository userRepository, JwtService jwtService, BCryptPasswordEncoder passwordEncoder) {
-        this.userRepository = userRepository;
-        this.jwtService = jwtService;
-        this.passwordEncoder = passwordEncoder;
-    }
 
     @Transactional
     public AuthResponse register(String email, String nickname, String rawPassword) {

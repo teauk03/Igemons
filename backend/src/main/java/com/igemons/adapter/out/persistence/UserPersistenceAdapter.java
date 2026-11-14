@@ -1,5 +1,6 @@
 package com.igemons.adapter.out.persistence;
 
+import lombok.RequiredArgsConstructor;
 import com.igemons.application.auth.UserRepository;
 import com.igemons.domain.users.User;
 import org.springframework.stereotype.Component;
@@ -7,13 +8,10 @@ import org.springframework.stereotype.Component;
 import java.util.Optional;
 
 @Component
+@RequiredArgsConstructor
 public class UserPersistenceAdapter implements UserRepository {
 
     private final SpringDataUserRepository repository;
-
-    public UserPersistenceAdapter(SpringDataUserRepository repository) {
-        this.repository = repository;
-    }
 
     @Override
     public Optional<User> findByProviderId(String providerId) {
