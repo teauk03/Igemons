@@ -1,5 +1,7 @@
 {
   "scripts": {
+    "dev:front": "npm --prefix frontend run dev",
+    "dev:back": "cd backend && docker compose up -d && set -a && . ./.env && set +a && FRONTEND_URL=\"${FRONTEND_URL:+$FRONTEND_URL,}http://localhost:3000\" mvn spring-boot:run",
     "vercel-build": "npm --prefix frontend install && npm --prefix frontend run build"
   }
 }
