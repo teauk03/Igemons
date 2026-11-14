@@ -1,6 +1,7 @@
 package com.igemons.adapter.out.persistence;
 
 import lombok.RequiredArgsConstructor;
+import com.igemons.adapter.out.persistence.entity.UserJpaEntity;
 import com.igemons.application.auth.UserRepository;
 import com.igemons.domain.users.User;
 import org.springframework.stereotype.Component;

@@ -1,4 +1,4 @@
-package com.igemons.adapter.out.persistence;
+package com.igemons.adapter.out.persistence.entity;
 
 import com.igemons.domain.users.*;
 import jakarta.persistence.*;
