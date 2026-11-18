@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Link from "next/link";
 import Header from "./components/Header";
 import { api } from "./lib/api";
 
@@ -40,12 +39,15 @@ export default function HomePage() {
           <h2 className="text-lg font-bold text-emerald-950">원클릭 서류 작성</h2>
           <p className="text-xs text-emerald-800 mt-1">간편하게 작성하는 생물 양도양수 서류</p>
         </div>
-        <Link
-          href="/contract"
+        {/* 외부 기관 사이트로 새 탭으로 열기 */}
+        <a
+          href="https://wims.mcee.go.kr/wims/minwon/cms/cmsCont.do?cntnts_sn=34"
+          target="_blank"
+          rel="noopener noreferrer"
           className="self-end text-xs font-semibold text-emerald-900 bg-white/80 px-3 py-1.5 rounded-full shadow-sm hover:bg-white"
         >
           작성하러 가기 →
-        </Link>
+        </a>
       </section>
 
       {/* 인기 생물 그리드 */}
