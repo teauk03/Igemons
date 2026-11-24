@@ -6,11 +6,16 @@ import com.igemons.adapter.out.persistence.entity.UserJpaEntity;
 import com.igemons.application.auth.DuplicateUserException;
 import com.igemons.application.auth.UserRepository;
 import com.igemons.domain.users.User;
+import com.igemons.domain.users.UserId;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Component;
 
 import java.sql.SQLException;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
@@ -26,6 +31,14 @@ public class UserPersistenceAdapter implements UserRepository {
     @Override
     public Optional<User> findById(Long id) {
         return repository.findById(id).map(UserJpaEntity::toDomain);
+    }
+
+    @Override
+    public Map<UserId, String> findNicknames(Collection<UserId> ids) {
+        if (ids.isEmpty()) return Map.of();
+        List<Long> raw = ids.stream().map(UserId::value).toList();
+        return repository.findNicknamesByIdIn(raw).stream()
+            .collect(Collectors.toMap(r -> UserId.of(r.getId()), SpringDataUserRepository.NicknameRow::getNickname));
     }
 
     /**

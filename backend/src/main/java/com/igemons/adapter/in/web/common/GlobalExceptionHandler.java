@@ -4,6 +4,7 @@ import com.igemons.application.NotFoundException;
 import com.igemons.application.auth.DuplicateUserException;
 import com.igemons.domain.DomainException;
 import com.igemons.domain.pets.PetAccessDeniedException;
+import com.igemons.domain.posts.PostAccessDeniedException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
@@ -19,8 +20,8 @@ import org.springframework.web.server.ResponseStatusException;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(PetAccessDeniedException.class)
-    public ResponseEntity<ErrorResponse> handleAccessDenied(PetAccessDeniedException e) {
+    @ExceptionHandler({PetAccessDeniedException.class, PostAccessDeniedException.class})
+    public ResponseEntity<ErrorResponse> handleAccessDenied(DomainException e) {
         return error(HttpStatus.FORBIDDEN, e.getMessage());
     }
 
