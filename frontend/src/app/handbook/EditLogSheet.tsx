@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import Popover, { Anchor } from "./Popover";
+import Popover, { Anchor } from "../components/Popover";
 import { LOG_TYPE_LABEL, PetLog } from "./types";
 
 const fieldClass = "w-full min-w-0 border border-gray-200 rounded-lg px-3 py-2 text-sm";

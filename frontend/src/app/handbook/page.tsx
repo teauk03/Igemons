@@ -7,7 +7,7 @@ import { useAuth } from "../context/AuthContext";
 import { api } from "../lib/api";
 
 import EditLogSheet from "./EditLogSheet";
-import Popover, { Anchor, anchorOf } from "./Popover";
+import Popover, { Anchor, anchorOf } from "../components/Popover";
 import type { Pet, PetLog } from "./types";
 
 type FormKind = "pet" | "feeding" | "shedding" | "weight" | "environment" | "note";
